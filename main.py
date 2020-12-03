@@ -215,21 +215,14 @@ def dashboard():
                         LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
                         LEFT JOIN products pro on pro.product_id = p.product_id
                         LEFT JOIN clients c on c.client_id=s.client_id 
-                        WHERE s.user_id = {g.user.id} AND ( s.created_at >= {start} AND s.created_at <= {end} )
-        """)
-        print(f"""
-                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
-                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
-                        LEFT JOIN products pro on pro.product_id = p.product_id
-                        LEFT JOIN clients c on c.client_id=s.client_id 
-                        WHERE s.user_id = {g.user.id} AND ( s.created_at >= '{start}' AND s.created_at <= '{end}' )
+                        WHERE s.user_id = {g.user.id} AND s.created_at >= {start} AND s.created_at <= '{end}';
         """)
         custom = mycursor.fetchone()[0]
         print("CUSTOOOOOOOOOOOOOOOOOOM:", custom)
-        return render_template('dashboard.html', day=day, week=week, month=month, custom=f"Las ventas de ##/##/## a ##/##/## son de {custom}")
+        return render_template('dashboard.html', day=day, week=week, month=month, custom=f"Las ventas de {start} a {end} son de {custom}$")
 
     else:
-        return render_template('dashboard.html', day=day, week=week, month=month, custom="Las ventas de ##/##/## a ##/##/## son de XXX$")
+        return render_template('dashboard.html', day=day, week=week, month=month, custom="Las ventas de ####/##/## a ####/##/## son de XXX$")
 
 
 @app.route('/account', methods=['POST', 'GET'])
