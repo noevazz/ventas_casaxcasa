@@ -174,11 +174,62 @@ def signup_validate():
     else:
         return redirect('/signup', code=302)
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    if connectet_to_db == False: return "<H1 style='font-family:Arial'>No se pudo conectar a la base de datos</H1> Verifique la conexión"
     if not g.user:
         return redirect(url_for('main'))
-    return render_template('dashboard.html')
+
+    mycursor.execute(f"""
+                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM ventascasaxcasas.sales s
+                        LEFT JOIN ventascasaxcasas.product_in_sale p on s.sale_id=p.sale_id
+                        LEFT JOIN ventascasaxcasas.products pro on pro.product_id = p.product_id
+                        LEFT JOIN ventascasaxcasas.clients c on c.client_id=s.client_id 
+                        WHERE s.user_id = {g.user.id} AND s.created_at >= DATE(NOW())
+    """)
+    day = mycursor.fetchone()[0]
+
+    mycursor.execute(f"""
+                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
+                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
+                        LEFT JOIN products pro on pro.product_id = p.product_id
+                        LEFT JOIN clients c on c.client_id=s.client_id 
+                        WHERE s.user_id = {g.user.id} AND s.created_at >= DATE(NOW()) - INTERVAL 7 DAY;
+    """)
+    week = mycursor.fetchone()[0]
+
+    mycursor.execute(f"""
+                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
+                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
+                        LEFT JOIN products pro on pro.product_id = p.product_id
+                        LEFT JOIN clients c on c.client_id=s.client_id 
+                        WHERE s.user_id = {g.user.id} AND s.created_at >= DATE(NOW()) - INTERVAL 30 DAY;
+    """)
+    month = mycursor.fetchone()[0]
+
+    if request.method == 'POST':
+        start = request.form.get('start')
+        end = request.form.get('end')
+        mycursor.execute(f"""
+                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
+                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
+                        LEFT JOIN products pro on pro.product_id = p.product_id
+                        LEFT JOIN clients c on c.client_id=s.client_id 
+                        WHERE s.user_id = {g.user.id} AND ( s.created_at >= {start} AND s.created_at <= {end} )
+        """)
+        print(f"""
+                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
+                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
+                        LEFT JOIN products pro on pro.product_id = p.product_id
+                        LEFT JOIN clients c on c.client_id=s.client_id 
+                        WHERE s.user_id = {g.user.id} AND ( s.created_at >= '{start}' AND s.created_at <= '{end}' )
+        """)
+        custom = mycursor.fetchone()[0]
+        print("CUSTOOOOOOOOOOOOOOOOOOM:", custom)
+        return render_template('dashboard.html', day=day, week=week, month=month, custom=f"Las ventas de ##/##/## a ##/##/## son de {custom}")
+
+    else:
+        return render_template('dashboard.html', day=day, week=week, month=month, custom="Las ventas de ##/##/## a ##/##/## son de XXX$")
 
 
 @app.route('/account', methods=['POST', 'GET'])
@@ -186,6 +237,7 @@ def account():
     if connectet_to_db == False: return "<H1 style='font-family:Arial'>No se pudo conectar a la base de datos</H1> Verifique la conexión"
     if not g.user:
         return redirect(url_for('main'))
+    
     if request.method == 'POST':
         mycursor.execute(f"UPDATE users SET mail='{request.form.get('mail')}', image='{request.form.get('image')}' WHERE user_id = {g.user.id};")
         mydb.commit()
@@ -356,12 +408,12 @@ def sales():
     if not g.user:
         return redirect(url_for('main'))
     print(g.user.id)
-    mycursor.execute("""
+    mycursor.execute(f"""
                     SELECT s.client_id, c.clientname, s.sale_id, s.salename, SUM(p.quantity*pro.sellingprice) as total FROM sales s
                     LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
                     LEFT JOIN products pro on pro.product_id = p.product_id
                     LEFT JOIN clients c on c.client_id=s.client_id 
-                    WHERE s.user_id = 2
+                    WHERE s.user_id = {g.user.id}
                     GROUP BY s.client_id, c.clientname, s.sale_id, s.salename;
     """)
     sales = mycursor.fetchall()

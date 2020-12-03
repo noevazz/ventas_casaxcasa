@@ -58,18 +58,90 @@
   </div>
   </div>
 
-  <div class="w3-panel w3-row">
-    <div class="w3-mobile">
-      <h2><b>{{g.user.storename}}</b></h2>
+  <div class="w3-panel w3-row w3-content">
+    <div id="myList">
+      <div class="w3-mobile">
+
+        <div class="w3-panel w3-row">
+          <div class="w3-mobile">
+            <h2><b>{{g.user.storename}}</b></h2>
+          </div>
+          <div>
+            <h3>Resumen de ventas</h3>
+          </div>
+          <br> <br>
+        </div>
+
+        <div class="w3-card w3-panel w3-padding-16 w3-yellow">
+          <div class="w3-row w3-container w3-center">
+            <div>
+              Las ventas del día de hoy fueron por <b>{{day}}$</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="w3-card w3-panel w3-padding-16 w3-yellow">
+          <div class="w3-row w3-container w3-center">
+            <div>
+              Las ventas de los ultimos 7 días fueron por <b>{{week}}$</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="w3-card w3-panel w3-padding-16 w3-yellow">
+          <div class="w3-row w3-container w3-center">
+            <div>
+              Las ventas de los ultimos 30 días fueron por <b>{{month}}$</b>
+            </div>
+          </div>
+        </div>
+
+        Consultar ventas en un rango de fechas:
+        <form action="/dashboard" method="POST">
+
+          <label>Inicio:</label>
+          <input type="date" id="start" name="start" onchange="checkdates()" required>
+
+          <label>Fin:</label>
+          <input type="date" id="end" name="end" onchange="checkdates()" required>
+
+          <button title="Editar" type="Consultar" class="w3-button w3-round w3-blue w3-card" name="action"
+            value="edit">Consultar</button>
+        </form>
+
+        <div class="w3-card w3-panel w3-padding-16 w3-yellow">
+          <div class="w3-row w3-container w3-center">
+            <div>
+              {{custom}}
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div>
-      <h3>Resumen de ventas</h3>
-    </div>
+
   </div>
 
+
   <script>
+
     document.getElementById('modal').style.display = '{{modal}}';
-    console.log('{{modal}}')
+    console.log('{{modal}}');
+    var start = document.getElementById("start");
+    var end = document.getElementById("end");
+
+    function checkdates() {
+      var start_in_date = new Date(start.value);
+      var end_in_date = new Date(end.value);
+
+      start_in_date.setHours(0, 0, 0, 0);
+      end_in_date.setHours(0, 0, 0, 0);
+
+      console.log(start_in_date);
+      console.log(end_in_date);
+
+    }
+    //confirm.setCustomValidity('');
   </script>
 
 </body>
