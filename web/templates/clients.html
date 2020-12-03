@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Clientes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <style>
+    body {
+      background-image: URL("{{ url_for('static', filename='img/dots.png') }}");
+      background-repeat: repeat;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="modal" class="w3-modal w3-center">
+    <div class="w3-modal-content w3-card-4">
+      <header class="w3-container w3-blue">
+        <span onclick="document.getElementById('modal').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+        <br>
+        <h2>✅ Se creo el usuario. 🤓</h2>
+        <br><br>
+      </header>
+    </div>
+  </div>
+
+  <div id="alertmodal" class="w3-modal">
+    <div class="w3-modal-content w3-card-4">
+      <header class="w3-container w3-deep-orange">
+        <span onclick="document.getElementById('alertmodal').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+        <br>
+        <h2 class=w3-center>Se eliminó el usuario</h2>
+      </header>
+    </div>
+  </div>
+
+  <div class="w3-green w3-row w3-xlarge">
+    <div class="w3-quarter">
+      <a href="/dashboard" class="w3-bar-item w3-button w3-hover-teal">↩️</a>
+      <a href="/products" class="w3-bar-item w3-button w3-hover-teal">Productos</a>
+      <a href="/clients" class="w3-bar-item w3-button w3-hover-teal">Clientes</a>
+      <a href="/sales" class="w3-bar-item w3-button w3-hover-teal">Ventas</a>
+    </div>
+
+    <div class="w3-half w3-center">
+      <a href="" id="title" class="w3-bar-item w3-button w3-hover-green">
+        Ventas Casa por Casa 🛍️
+      </a>
+    </div>
+
+    <div class="w3-quarter">
+      <div class="w3-dropdown-hover w3-right">
+        <button class="w3-button w3-green w3-hover-green"><img class="w3-circle"
+            src="{{g.user.image if g.user.image else url_for('static', filename='img/user_image.png') }}"
+            style="width: 2rem; height: 2rem;"></button>
+        <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+          <a href="{{ url_for('account') }}" class="w3-bar-item w3-button">⚙️ Cuenta</a>
+          <a href="{{ url_for('exit') }}" class="w3-bar-item w3-button">👋 Salir</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <div class="w3-panel w3-row w3-content">
+    <h2>Clientes</h2>
+    <div class="w3-mobile">
+      <br>
+      <div class="w3-card w3-panel w3-padding-16 w3-yellow w3-center">
+        <button onclick="location.href='/clients/new';" title="Crear cliente nuevo"
+          class="w3-button w3-xlarge w3-circle w3-green" style="box-shadow: 2px 2px 8px rgb(168, 173, 120)">+</button>
+      </div>
+      <br>
+    </div>
+
+    <div class="w3-row w3-section">
+      <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
+      <div class="w3-rest">
+        <input id="myInput" class="w3-input w3-animate-input w3-border w3-round" name="busqueda" type="text"
+          placeholder="Buscar cliente" style="width:30%" onkeyup="search()">
+      </div>
+    </div>
+
+    <div id="myList">
+      {% for client in clients %}
+      <form action="/clients/actions" method="post">
+        <input type="hidden" name="client_id" value="{{client[0]}}">
+        <input type="hidden" name="clientname" value="{{client[1]}}">
+        <input type="hidden" name="mail" value="{{client[2]}}">
+        <input type="hidden" name="address" value="{{client[4]}}">
+        <input type="hidden" name="phonenumber" value="{{client[5]}}">
+
+        <div class="w3-mobile">
+          <div class="w3-card w3-panel w3-padding-16 w3-yellow">
+            <div class="w3-row w3-container w3-center">
+              <div class="w3-third w3-container">
+                <br> <br>
+                <button title="Editar" type="submit" class="w3-button w3-round w3-blue w3-card" name="action"
+                  value="edit">✏️</button>
+              </div>
+              <div class="content w3-third w3-container">
+                <b>ID:</b> {{client[0]}} <br>
+                <b>Nombre:</b> {{client[1]}} <br>
+                <b>Correo:</b> {{client[2]}} <br>
+                <b>Dirección:</b> {{client[4]}} <br>
+                <b>Telefono:</b> {{client[5]}}
+              </div>
+              <div class="w3-third w3-container">
+                <br> <br>
+                <button title="Eliminar" type="submit" class="w3-button w3-round w3-red w3-card" name="action"
+                  value="delete">🗑️</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </form>
+      {% endfor%}
+    </div>
+
+  </div>
+
+
+
+  <script>
+    document.getElementById('modal').style.display = '{{modal}}';
+    document.getElementById('alertmodal').style.display = '{{alertmodal}}';
+  </script>
+
+  <script>
+
+
+    function search() {
+      var myList_obj = document.getElementById("myList")
+      var forms_obj = myList_obj.getElementsByTagName("form")
+
+      var filter, a;
+      
+      var txtValue;
+      var i;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      for (i = 0; i < forms_obj.length; i++) {
+        a = forms_obj[i].getElementsByClassName("content")[0]
+        console.log(a)
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          forms_obj[i].style.display = "";
+        } else {
+          forms_obj[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>

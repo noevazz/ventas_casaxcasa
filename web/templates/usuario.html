@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Pagina de productos</title>
+</head>
+<body>
+
+<h1>Hola usuario {{minombre}}</h1>
+<p>tienes una edad de {{edad}}.</p>
+{% if edad <= 16 %}
+  <h2>que joven eres {{minombre}}</h2>
+{% else %}
+  <p>tas chavorruco {{minombre}}</p>
+{% endif %}
+<ul>
+{% for item in milista %}
+<li>{{item}}</li>
+{% endfor%}
+</ul> 
+</body>
+</html>

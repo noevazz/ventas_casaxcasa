@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VentasCasaPorCasa</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet"> 
+    <style>
+        h1 {font-family: 'Kalam', cursive;}
+        body, html {height: 100%;
+          background-image: URL("{{ url_for('static', filename='img/dots.png') }}");
+          background-repeat: repeat;
+        }
+        .bgimg {
+          min-height: 100%;          
+        }
+        a:link {
+          text-decoration: none;
+        }
+    </style>
+</head>
+<body class="w3-green">
+    <div id="modal" class="w3-modal">
+      <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-deep-orange"> 
+          <span onclick="document.getElementById('modal').style.display='none'" 
+          class="w3-button w3-display-topright">&times;</span>
+          <br>
+          <h2>Ups!, ese usuario ya existe.</h2>
+        </header>
+      </div>
+    </div>
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+      
+        <div class="w3-display-topleft w3-padding-large w3-large">
+            <a href="/">↩️ Inicio</a> 
+        </div>
+
+        <div class="w3-display-middle w3-round-large w3-mobile w3-card w3-blue-grey" style="width: 50%">
+           
+          <form class="w3-container" action="/signup/validate" method = "POST">  
+            <h2><b>Registro</b></h2>
+
+            <label>Nombre de usuario</label>
+            <input class="w3-input" type="text" name="username" required placeholder="SelenaQuintanilla"></p>
+            <br>
+
+            <label>Correo</label>
+            <input class="w3-input" type="mail" name="email" required placeholder="usuario@dominio.com"></p>
+            <br>
+
+            <label>Contraseña</label>
+            <input id="password" class="w3-input" type="password" name="password" onChange="onChange()" placeholder="Define tu contraseña" required></p>
+            <br>
+
+            <label>Repite tu contraseña</label>
+            <input id="confirm" class="w3-input" type="password" name="confirm" onChange="onChange()" placeholder="Vuelve a ingresar tu contraseña" required></p>
+
+            <input type="checkbox" onclick="hide_show_pass()" id="showpass"> <label for="showpass">Mostrar contraseñas</label>
+            <br>
+            <br>
+
+            <label>Nombre de tu tienda</label>
+            <input class="w3-input" type="text" name="storename" placeholder="Tuppers Los Dinos" required></p>
+            <br>
+
+            <button type="submit" class="w3-button w3-round w3-deep-orange w3-right w3-card">Registrame</button>
+            <br><br><br>
+
+          </form>
+        </div>
+
+        <div class="w3-display-bottomright w3-padding-large">
+          Universidad de Colima
+        </div>
+    </div>
+    <script>
+      function onChange() {
+        const password = document.querySelector('input[name=password]');
+        const confirm = document.querySelector('input[name=confirm]');
+        if (confirm.value === password.value) {
+          confirm.setCustomValidity('');
+        } else {
+          confirm.setCustomValidity('Ups!, las contraseñas no coinciden');
+        }
+      }
+      document.getElementById('modal').style.display='{{modal}}'
+
+      document.getElementById("password").type = 'password'
+      document.getElementById("showpass").checked = false
+      function hide_show_pass() {
+        var password = document.getElementById("password");
+        var confirm = document.getElementById("confirm");
+        if (password.type === "password") {
+          password.type = "text";
+          confirm.type = "text";
+        } else {
+          password.type = "password";
+          confirm.type = "password";
+        }
+      }
+    </script>
+</body>
+</html>
+  

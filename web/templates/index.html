@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VentasCasaPorCasa</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet"> 
+    <style>
+        h1 {font-family: 'Kalam', cursive;}
+        body, html {height: 100%;
+          background-image: URL("{{ url_for('static', filename='img/dots.png') }}");
+          background-repeat: repeat;
+        }
+        .bgimg {
+          min-height: 100%;          
+        }
+        a:link {
+          text-decoration: none;
+        }
+    </style>
+</head>
+<body class="w3-green">
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+        <div class="w3-display-topleft w3-padding-large w3-large" style="z-index: 1000">
+            <a href="./login">Entrar</a> / <a href="./signup">Registrarme</a>
+        </div>
+        <div class="w3-display-middle">
+          <h1 class="w3-jumbo w3-animate-top">Ventas Casa por Casa 🛍️</h1>
+          <hr class="w3-border-white" style="margin:auto;width:95%">
+          <p class="w3-large w3-center">Tu tienda online para llegar a tus clientes</p>
+        </div>
+        <div class="w3-display-bottomright w3-padding-large">
+          Universidad de Colima
+        </div>
+    </div>
+
+</body>
+</html>
+  

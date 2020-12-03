@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Tablero</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <style>
+    body {
+      background-image: URL("{{ url_for('static', filename='img/dots.png') }}");
+      background-repeat: repeat;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="modal" class="w3-modal w3-center">
+    <div class="w3-modal-content w3-card-4">
+      <header class="w3-container w3-blue">
+        <span onclick="document.getElementById('modal').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+        <br>
+        <h2>✅ Cambios guardados. 🤓</h2>
+        <br>
+        <button class="w3-button w3-round w3-green w3-card" onclick="location.href='dashboard';">Regresar al
+          tablero</button>
+        <br><br>
+      </header>
+    </div>
+  </div>
+
+  <div class="w3-green w3-row w3-xlarge">
+    <div class="w3-quarter">
+      <a href="/products" class="w3-bar-item w3-button w3-hover-teal">Productos</a>
+      <a href="/clients" class="w3-bar-item w3-button w3-hover-teal">Clientes</a>
+      <a href="/sales" class="w3-bar-item w3-button w3-hover-teal">Ventas</a>
+    </div>
+
+    <div class="w3-half w3-center">
+      <a href="" id="title" class="w3-bar-item w3-button w3-hover-green">
+        Ventas Casa por Casa 🛍️
+      </a>
+    </div>
+
+    <div class="w3-quarter">
+      <div class="w3-dropdown-hover w3-right">
+        <button class="w3-button w3-green w3-hover-green"><img class="w3-circle"
+            src="{{g.user.image if g.user.image else url_for('static', filename='img/user_image.png') }}"
+            style="width: 2rem; height: 2rem;"></button>
+        <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+          <a href="{{ url_for('account') }}" class="w3-bar-item w3-button">⚙️ Cuenta</a>
+          <a href="{{ url_for('exit') }}" class="w3-bar-item w3-button">👋 Salir</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <div class="w3-panel w3-row">
+    <div class="w3-mobile">
+      <h2><b>{{g.user.storename}}</b></h2>
+    </div>
+    <div>
+      <h3>Resumen de ventas</h3>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('modal').style.display = '{{modal}}';
+    console.log('{{modal}}')
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VentasCasaPorCasa</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet"> 
+    <style>
+        h1 {font-family: 'Kalam', cursive;}
+        body, html {height: 100%;
+          background-image: URL("{{ url_for('static', filename='img/dots.png') }}");
+          background-repeat: repeat;
+        }
+        .bgimg {
+          min-height: 100%;          
+        }
+        a:link {
+          text-decoration: none;
+        }
+    </style>
+</head>
+<body class="w3-green">
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+      
+        <div class="w3-display-topleft w3-padding-large w3-large">
+            <a href="/">↩️ Inicio</a> 
+        </div>
+
+        <div id="modal" class="w3-modal">
+          <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-teal"> 
+              <span onclick="document.getElementById('modal').style.display='none'" 
+              class="w3-button w3-display-topright">&times;</span>
+              <br>
+              <h2>Exito!, el usuario <b>{{myusername}}</b> se ha registrado.</h2>
+            </header>
+          </div>
+        </div>
+
+        <div id="alertmodal" class="w3-modal">
+          <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-deep-orange"> 
+              <span onclick="document.getElementById('alertmodal').style.display='none'" 
+              class="w3-button w3-display-topright">&times;</span>
+              <br>
+              <h2 class=w3-center>{{mymessage}}</h2>
+            </header>
+          </div>
+        </div>
+
+        <br>
+        <div class="w3-display-middle w3-round-large w3-mobile w3-card w3-blue-grey" style="width: 50%">          
+          <form class="w3-container" action="/login/validate" method = "POST">
+            <h2><b>Autenticación</b></h2>
+
+            <label>Nombre de usuario</label>
+            <input class="w3-input" type="text" name="username" placeholder="Selena" value="{{myusername if myusername!='' else ''}}" required>
+            <br>
+
+            <label>Contraseña</label>
+            <input id="password" class="w3-input" type="password" name="password" placeholder="Escriba su contraseña aquí" required>
+            <br>
+
+            <input type="checkbox" onclick="hide_show_pass()" id="showpass"> <label for="showpass">Mostrar contraseña</label>
+            <br>
+
+            <button type="submit" class="w3-button w3-round w3-deep-orange w3-right w3-card">Entrar</button>
+            <br><br><br>
+
+          </form>
+        </div>
+
+        <div class="w3-display-bottomright w3-padding-large">
+          Universidad de Colima
+        </div>
+    </div>
+    <script>
+      document.getElementById('modal').style.display='{{mymodal}}'
+      document.getElementById('alertmodal').style.display='{{myalertmodal}}'
+
+
+      document.getElementById("password").type = 'password'
+      document.getElementById("showpass").checked = false
+      function hide_show_pass() {
+        var x = document.getElementById("password");
+        if (x.type === "password") {
+          x.type = "text";
+        } else {
+          x.type = "password";
+        }
+      }
+    </script>
+</body>
+</html>
+  
