@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Clientes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        body {
+            background-image: URL("{{ url_for('static', filename='img/dots.png') }}");
+            background-repeat: repeat;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="w3-green w3-row w3-xlarge w3-center">
+        <a href="" id="title" class="w3-bar-item w3-button w3-hover-green">
+            Ventas Casa por Casa 🛍️
+        </a>
+    </div>
+
+
+    </div>
+    </div>
+
+    <div class="w3-panel w3-row w3-content">
+        <h2>Productos de "{{storename}}"</h2>
+
+        <div class="w3-row w3-section">
+            <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
+            <div class="w3-rest">
+                <input id="myInput" class="w3-input w3-animate-input w3-border w3-round" name="busqueda" type="text"
+                    placeholder="Buscar producto" style="width:30%" onkeyup="search()">
+            </div>
+        </div>
+
+        <div id="myList">
+            {% for product in products %}
+            <form action="/products/actions" method="post">
+                <input type="hidden" name="product_id" value="{{product[0]}}">
+                <input type="hidden" name="productname" value="{{product[1]}}">
+                <input type="hidden" name="description" value="{{product[2]}}">
+                <input type="hidden" name="stock" value="{{product[3]}}">
+                <input type="hidden" name="costprice" value="{{product[4]}}">
+                <input type="hidden" name="sellingprice" value="{{product[5]}}">
+                <input type="hidden" name="image" value="{{product[7]}}">
+
+
+                <div class="w3-mobile">
+                    <div class="w3-card w3-panel w3-padding-16 w3-yellow">
+                        <div class="w3-row w3-container w3-center">
+                            <div class="w3-third w3-container">
+                                <br> <br>
+
+                            </div>
+                            <div class="content w3-third w3-container">
+                                <img src="{{product[7]}}" alt="" style="width:150px; height: 150px;">
+                                <br>
+                                <b>ID:</b> {{product[0]}} <br>
+                                <b>Nombre:</b> {{product[1]}} <br>
+                                <b>Descripción:</b> {{product[2]}} <br>
+                                <b>Stock:</b> {{product[3]}} <br>
+                                <b>Precio de venta:</b> {{product[5]}} <br>
+                            </div>
+                            <div class="w3-third w3-container">
+                                <br> <br>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {% endfor%}
+        </div>
+
+    </div>
+
+
+
+    <script>
+        document.getElementById('modal').style.display = '{{modal}}';
+        document.getElementById('alertmodal').style.display = '{{alertmodal}}';
+    </script>
+
+    <script>
+
+
+        function search() {
+            var myList_obj = document.getElementById("myList")
+            var forms_obj = myList_obj.getElementsByTagName("form")
+
+            var filter, a;
+
+            var txtValue;
+            var i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            for (i = 0; i < forms_obj.length; i++) {
+                a = forms_obj[i].getElementsByClassName("content")[0]
+                console.log(a)
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    forms_obj[i].style.display = "";
+                } else {
+                    forms_obj[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>

@@ -12,7 +12,7 @@
     ✅ 4. El dueño de la tienda puede registrar una venta, seleccionando al cliente
        y productos que va a vender, los cuales deben ser descontados del inventario.
 
-    5. El dueño puede ver lo que a vendido por, día, por mes, por año o en un periodo dado.
+    ✅ 5. El dueño puede ver lo que a vendido por, día, por mes, por año o en un periodo dado.
 
     ✅ 6. El dueño puede cerrar la sesión y salirse de la aplicación.
 """
@@ -181,10 +181,10 @@ def dashboard():
         return redirect(url_for('main'))
 
     mycursor.execute(f"""
-                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM ventascasaxcasas.sales s
-                        LEFT JOIN ventascasaxcasas.product_in_sale p on s.sale_id=p.sale_id
-                        LEFT JOIN ventascasaxcasas.products pro on pro.product_id = p.product_id
-                        LEFT JOIN ventascasaxcasas.clients c on c.client_id=s.client_id 
+                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
+                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
+                        LEFT JOIN products pro on pro.product_id = p.product_id
+                        LEFT JOIN clients c on c.client_id=s.client_id 
                         WHERE s.user_id = {g.user.id} AND s.created_at >= DATE(NOW())
     """)
     day = mycursor.fetchone()[0]
@@ -210,13 +210,9 @@ def dashboard():
     if request.method == 'POST':
         start = request.form.get('start')
         end = request.form.get('end')
-        mycursor.execute(f"""
-                        SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s
-                        LEFT JOIN product_in_sale p on s.sale_id=p.sale_id
-                        LEFT JOIN products pro on pro.product_id = p.product_id
-                        LEFT JOIN clients c on c.client_id=s.client_id 
-                        WHERE s.user_id = {g.user.id} AND s.created_at >= {start} AND s.created_at <= '{end}';
-        """)
+        query = f"SELECT SUM(p.quantity*pro.sellingprice) as total FROM sales s LEFT JOIN product_in_sale p on s.sale_id=p.sale_id LEFT JOIN products pro on pro.product_id = p.product_id LEFT JOIN clients c on c.client_id=s.client_id WHERE s.user_id = {g.user.id} AND s.created_at >= '{start}' AND s.created_at <= '{end}';"
+        print("🎄🎄🎄🎄🎄", query)
+        mycursor.execute(query)
         custom = mycursor.fetchone()[0]
         print("CUSTOOOOOOOOOOOOOOOOOOM:", custom)
         return render_template('dashboard.html', day=day, week=week, month=month, custom=f"Las ventas de {start} a {end} son de {custom}$")
@@ -262,6 +258,26 @@ def products():
     modal = request.args.get('modal', 'none')
     alertmodal = request.args.get('alertmodal', 'none')
     return render_template('products.html', products=products, modal=modal, alertmodal=alertmodal)
+
+@app.route('/products/public')
+@app.route('/products/public/<user_id>')
+def products_public(user_id=None):
+    if connectet_to_db == False: return "<H1 style='font-family:Arial'>No se pudo conectar a la base de datos</H1> Verifique la conexión"
+    if user_id == None:
+        return redirect(url_for('main'))
+    mycursor.execute(f"SELECT * FROM products where user_id={user_id};")
+    products = mycursor.fetchall()
+    if products == []:
+        return redirect(url_for('main'))
+        
+    mycursor.execute(f"SELECT s.storename FROM stores s LEFT JOIN users u ON u.user_id = s.user_id where u.user_id={user_id};")
+    storename = mycursor.fetchall()[0][0]
+
+    print("PRODUCTOS::::::::::::::::::::", products)
+    modal = request.args.get('modal', 'none')
+    alertmodal = request.args.get('alertmodal', 'none')
+    return render_template('products_public.html', products=products, modal=modal, alertmodal=alertmodal, storename=storename)
+
 
 @app.route('/products/new', methods=['POST', 'GET'])
 def products_new():
@@ -373,6 +389,11 @@ def clients_actions():
                                                         modal="block")
         elif request.form.get('action') == "delete":
             mycursor.execute(f"DELETE FROM clients WHERE client_id = {request.form.get('client_id')};")
+            mydb.commit()
+            sale_id = mycursor.execute(f"SELECT sale_id FROM sales WHERE client_id = {request.form.get('client_id')};")
+            mycursor.execute(f"DELETE FROM product_in_sale WHERE sale_id = {sale_id};")
+            mydb.commit()
+            mycursor.execute(f"DELETE FROM sales WHERE sale_id = {sale_id};")
             mydb.commit()
             return redirect(url_for('clients', modal='none', alertmodal="block"))
 
